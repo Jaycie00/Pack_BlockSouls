@@ -2,6 +2,9 @@
 exec("./scripts.cs");
 exec("./sounds/sounds.cs");
 exec("./src/chatbubble.cs");
+exec("./src/healthsystem.cs");
+exec("./src/Support_HealthDetection.cs");
+exec("./src/Support_HealthSaver.cs");
 
 //music
 datablock AudioProfile(MusicCaves)

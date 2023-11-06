@@ -1,6 +1,7 @@
 //exec shit
 exec("./scripts.cs");
 exec("./sounds/sounds.cs");
+exec("./src/chatbubble.cs");
 
 //music
 datablock AudioProfile(MusicCaves)

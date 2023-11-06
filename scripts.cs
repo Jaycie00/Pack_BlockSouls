@@ -139,7 +139,7 @@ registeroutputevent("Player", "addMinDamage", "int -999999999 999999999 0");
 function gameconnection::rotDebuff(%this)
 {
     if(!%this.oldmaxhealth)
-        %this.oldmaxhealth = %this.player.getmaxhealth()
+        %this.oldmaxhealth = %this.player.getmaxhealth();
     if(%this.rotdebuff < 5)
         %this.rotdebuff++;
     %this.player.setmaxhealth(%this.oldmaxhealth / (0.025 * %this.rotdebuff));

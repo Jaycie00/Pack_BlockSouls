@@ -5,6 +5,8 @@ exec("./src/chatbubble.cs");
 exec("./src/healthsystem.cs");
 exec("./src/Support_HealthDetection.cs");
 exec("./src/Support_HealthSaver.cs");
+exec("./src/customcdn.cs");
+exec("./src/client.cs");
 
 //music
 datablock AudioProfile(MusicCaves)

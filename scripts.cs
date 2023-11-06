@@ -312,6 +312,6 @@ function player::removeDebuff(%this, %number)
     else if(%number == 7)
         %this.poisoned = 0;
     else if(%number == 8)
-        %this.stunned = 10
+        %this.stunned = 10;
 }
 registeroutputevent("Player", "removeDebuff", "TAB acid 0 bleeding 1 burning 2 chill 3 cripple 4 daze 5 immobilize 6 poison 7 stun 8");

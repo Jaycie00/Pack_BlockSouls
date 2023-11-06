@@ -56,10 +56,46 @@ datablock AudioProfile(MusicVolcanoManor)
     preload = true;
     uiName = "Volcano_Manor";
 };
-datablock AudioProfile(Tunnels)
+datablock AudioProfile(MusicTunnels)
 {
     filename = "./music/Tunnels.ogg";
     description = AudioMusicLooping3d;
     preload = true;
     uiName = "Tunnels";
 };
+datablock AudioProfile(AmbianceCampFire)
+{
+    filename = "./music/Ambiance_Camp_Fire.ogg";
+    description = AudioMusicLooping3d;
+    preload = true;
+    uiName = "Ambiance_Camp_Fire";
+};
+datablock AudioProfile(AmbianceFire)
+{
+    filename = "./music/Ambiance_Fire.ogg";
+    description = AudioMusicLooping3d;
+    preload = true;
+    uiName = "Ambiance_Fire";
+};
+datablock AudioProfile(AmbienceForestCliff)
+{
+    filename = "./music/Ambience_-_Forest_Cliff.ogg";
+    description = AudioMusicLooping3d;
+    preload = true;
+    uiName = "Ambience_-_Forest_Cliff";
+};
+datablock AudioProfile(AmbienceForestLife)
+{
+    filename = "./music/Ambience_-_Forest_Life.ogg";
+    description = AudioMusicLooping3d;
+    preload = true;
+    uiName = "Ambience_-_Forest_Life";
+};
+datablock AudioProfile(AmbianceWind)
+{
+    filename = "./music/Ambiance_Wind.ogg";
+    description = AudioMusicLooping3d;
+    preload = true;
+    uiName = "Ambiance_Wind";
+};
+

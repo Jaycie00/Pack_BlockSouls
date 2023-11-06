@@ -19,8 +19,6 @@ function serverCmdSuicide(%this)
 			%pl.kill();
 }
 
-//Credit to Port for the functions
-//
 package CustomHealth
 {
 	function Player::setHealth(%this, %health)

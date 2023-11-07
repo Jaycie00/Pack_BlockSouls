@@ -229,44 +229,178 @@ package statuseffects
 };
 activatepackage(statuseffects);
 
+datablock ExplosionData(dazeExplosion)
+{
+   lifeTimeMS = 350;
+
+   explosionScale = "1 1 1";
+
+   shakeCamera = true;
+   camShakeFreq = "1.0 1.0 1.0";
+   camShakeAmp = "1.0 2.0 1.0";
+   camShakeDuration = 35;
+   camShakeRadius = 0.1;
+
+   // Dynamic light
+   lightStartRadius = 0;
+   lightEndRadius = 0;
+
+   damageRadius = 1;
+   radiusDamage = 0;
+
+   impulseRadius = 1;
+   impulseForce = 10;
+};
+
+datablock ProjectileData(dazeProjectile)
+{
+    projectileShapename = "base/data/shapes/empty.dts";
+    directDamage = 0;
+
+    explosion = dazeExplosion;
+    hasLight = false;
+
+    lifetime = 100;
+};
+
 function player::statusschedule(%this)
 {
     if(%this.acid)
     {
-
+	%this.addHealth(-0.5);
     }
     if(%this.bleeding)
     {
-        
+        %this.addHealth(-0.5);
     }
     if(%this.burning)
     {
-        
+        %this.addHealth(-0.5);
     }
     if(%this.chill)
     {
-        
+	%this.addHealth(-0.5);
+	if(!%this.wasChill)
+	{
+	    %data = %this.getDatablock();
+	    %this.setMaxForwardSpeed(%data.MaxForwardSpeed - 2);
+	    %this.setMaxSideSpeed(%data.MaxSideSpeed - 2);
+	    %this.setMaxBackwardSpeed(%data.MaxBackwardSpeed - 1);
+	    %this.setMaxCrouchForwardSpeed(%data.MaxForwardCrouchSpeed - 1);
+	    %this.setMaxCrouchSideSpeed(%data.MaxSideCrouchSpeed - 1);
+	    %this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed - 1);
+	    %this.wasChill = 1;
+	}
+    }
+    else if(%this.wasChill)
+    {
+	%data = %this.getDatablock();
+	%this.setMaxForwardSpeed(%data.MaxForwardSpeed);
+	%this.setMaxSideSpeed(%data.MaxSideSpeed);
+	%this.setMaxBackwardSpeed(%data.MaxBackwardSpeed);
+	%this.setMaxCrouchForwardSpeed(%data.MaxForwardCrouchSpeed);
+	%this.setMaxCrouchSideSpeed(%data.MaxSideCrouchSpeed);
+	%this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed);
+	%this.wasChill = 0;
     }
     if(%this.crippled)
     {
-        
+	if(!%this.wasCrippled)
+	{
+	    %data = %this.getDatablock();
+	    %this.setMaxForwardSpeed(%data.MaxForwardSpeed - 4);
+	    %this.setMaxSideSpeed(%data.MaxSideSpeed - 4);
+	    %this.setMaxBackwardSpeed(%data.MaxBackwardSpeed - 2);
+	    %this.setMaxCrouchForwardSpeed(%data.MaxForwardCrouchSpeed - 2);
+	    %this.setMaxCrouchSideSpeed(%data.MaxSideCrouchSpeed - 1);
+	    %this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed - 1);
+	    %this.wasCrippled = 1;
+	}
+    }
+    else if(%this.wasCrippled)
+    {
+	%data = %this.getDatablock();
+	%this.setMaxForwardSpeed(%data.MaxForwardSpeed);
+	%this.setMaxSideSpeed(%data.MaxSideSpeed);
+	%this.setMaxBackwardSpeed(%data.MaxBackwardSpeed);
+	%this.setMaxCrouchForwardSpeed(%data.MaxForwardCrouchSpeed);
+	%this.setMaxCrouchSideSpeed(%data.MaxSideCrouchSpeed);
+	%this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed);
+        %this.wasCrippled = 0;
     }
     if(%this.dazed)
     {
-        
+	%this.spawnExplosion(drunkProjectile, 0.5);
+    }
+    else if(%this.wasDazed)
+    {
+	%this.wasDazed = 0;
     }
     if(%this.immobilized)
     {
-        
+	if(!%this.wasImmobilized)
+	{
+	    %this.setMaxForwardSpeed(0);
+	    %this.setMaxBackwardSpeed(0);
+	    %this.setMaxSideSpeed(0);
+	    %this.setMaxCrouchForwardSpeed(0);
+	    %this.setMaxCrouchBackwardSpeed(0);
+	    %this.setMaxCrouchSideSpeed(0);
+	    %this.wasImmobilized = 1;
+	}
+    }
+    else if(%this.wasImmobilized)
+    {
+	%data = %this.getDatablock();
+	%this.setMaxForwardSpeed(%data.MaxForwardSpeed);
+	%this.setMaxSideSpeed(%data.MaxSideSpeed);
+	%this.setMaxBackwardSpeed(%data.MaxBackwardSpeed);
+	%this.setMaxCrouchForwardSpeed(%data.MaxForwardCrouchSpeed);
+	%this.setMaxCrouchSideSpeed(%data.MaxSideCrouchSpeed);
+	%this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed);
+        %this.wasImmobilized = 0;
     }
     if(%this.poisoned)
     {
-        
+        %this.addHealth(-0.5);
     }
     if(%this.stunned)
     {
-        
+	if(!%this.wasStunned)
+	{
+	    %this.setMaxForwardSpeed(0);
+	    %this.setMaxBackwardSpeed(0);
+	    %this.setMaxSideSpeed(0);
+	    %this.setMaxCrouchForwardSpeed(0);
+	    %this.setMaxCrouchBackwardSpeed(0);
+	    %this.setMaxCrouchSideSpeed(0);
+
+	    %client = %this.getControllingClient();
+	    %client.setControlObject(%client.camera);
+	    %client.camera.unmountImage (0);
+	    %client.camera.setOrbitMode (%player, %player.getTransform(), 0, 8, 8);
+	    %client.camera.mode = "SPIN";
+	    %client.isSpying = 0;
+            %this.wasStunned = 1;
+	}
+    } 
+    else if(%this.wasStunned)
+    {
+	%data = %this.getDatablock();
+	%this.setMaxForwardSpeed(%data.MaxForwardSpeed);
+	%this.setMaxSideSpeed(%data.MaxSideSpeed);
+	%this.setMaxBackwardSpeed(%data.MaxBackwardSpeed);
+	%this.setMaxCrouchForwardSpeed(%data.MaxForwardCrouchSpeed);
+	%this.setMaxCrouchSideSpeed(%data.MaxSideCrouchSpeed);
+	%this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed);
+
+	%client = %this.client;
+	%client.setControlObject(%player);
+	%client.camera.setControlObject(0);
+	%client.camera.mode = "";
+        %this.wasStunned = 0;
     }
+	
     %this.statusScheduler = %this.schedule(100, statusschedule);
 }
 
@@ -291,7 +425,7 @@ function player::applyDebuff(%this, %number)
     else if(%number == 8)
         %this.stunned = 1;
 }
-registeroutputevent("Player", "applyDebuff", "TAB acid 0 bleeding 1 burning 2 chill 3 cripple 4 daze 5 immobilize 6 poison 7 stun 8");
+registeroutputevent("Player", "applyDebuff", "list acid 0 bleeding 1 burning 2 chill 3 cripple 4 daze 5 immobilize 6 poison 7 stun 8");
 
 function player::removeDebuff(%this, %number)
 {
@@ -314,4 +448,4 @@ function player::removeDebuff(%this, %number)
     else if(%number == 8)
         %this.stunned = 10;
 }
-registeroutputevent("Player", "removeDebuff", "TAB acid 0 bleeding 1 burning 2 chill 3 cripple 4 daze 5 immobilize 6 poison 7 stun 8");
+registeroutputevent("Player", "removeDebuff", "list acid 0 bleeding 1 burning 2 chill 3 cripple 4 daze 5 immobilize 6 poison 7 stun 8");

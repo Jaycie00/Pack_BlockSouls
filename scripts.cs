@@ -229,7 +229,7 @@ package statuseffects
 };
 activatepackage(statuseffects);
 
-datablock ExplosionData(dazeExplosion)
+datablock ExplosionData(dbDazeExplosion)
 {
    lifeTimeMS = 350;
 
@@ -252,12 +252,85 @@ datablock ExplosionData(dazeExplosion)
    impulseForce = 10;
 };
 
-datablock ProjectileData(dazeProjectile)
+datablock ProjectileData(dbDazeProjectile)
 {
     projectileShapename = "base/data/shapes/empty.dts";
     directDamage = 0;
 
-    explosion = dazeExplosion;
+    explosion = dbDazeExplosion;
+    hasLight = false;
+
+    lifetime = 100;
+};
+
+datablock ParticleData(dbBleedParticle)
+{
+	dragCoefficient      = 3;
+	gravityCoefficient   = 1;
+	inheritedVelFactor   = 0.2;
+	constantAcceleration = 0.0;
+	lifetimeMS           = 35;
+	lifetimeVarianceMS   = 15;
+	textureName          = "base/data/particles/dot";
+	spinSpeed		= 10.0;
+	spinRandomMin		= -500.0;
+	spinRandomMax		= 500.0;
+	colors[0]     = "0.7 0.1 0.2 0.9";
+	colors[1]     = "0.9 0.0 0.0 0.0";
+	sizes[0]      = 1;
+	sizes[1]      = 0.5;
+
+	useInvAlpha = false;
+};
+datablock ParticleEmitterData(dbBleedEmitter)
+{
+   ejectionPeriodMS = 3;
+   periodVarianceMS = 0;
+   ejectionVelocity = 1.0;
+   velocityVariance = 1.0;
+   ejectionOffset   = 0.0;
+   thetaMin         = 0;
+   thetaMax         = 90;
+   phiReferenceVel  = 0;
+   phiVariance      = 360;
+   overrideAdvance = false;
+   particles = "dbBleedParticle";
+
+   uiName = "Debuff Bleed";
+};
+
+
+datablock ExplosionData(dbBleedExplosion)
+{
+   lifeTimeMS = 350;
+
+   particleEmitter = dbBleedEmitter;
+   particleDensity = 10;
+   particleRadius = 0.2;
+
+   faceViewer     = true;
+   explosionScale = "1 1 1";
+
+   shakeCamera = false;
+   camShakeFreq = "1.0 1.0 1.0";
+   camShakeAmp = "1.0 2.0 1.0";
+   camShakeDuration = 35;
+   camShakeRadius = 0.1;
+
+   // Dynamic light
+   lightStartRadius = 0;
+   lightEndRadius = 0;
+
+   damageRadius = 1;
+   radiusDamage = 0;
+};
+
+datablock ProjectileData(dbBleedProjectile)
+{
+    projectileShapename = "base/data/shapes/empty.dts";
+    directDamage = 0;
+
+    explosion = dbBleedExplosion;
     hasLight = false;
 
     lifetime = 100;
@@ -272,6 +345,7 @@ function player::statusschedule(%this)
     if(%this.bleeding)
     {
         %this.addHealth(-0.5);
+	%this.spawnExplosion(dbBleedProjectile, 1);
     }
     if(%this.burning)
     {
@@ -330,7 +404,7 @@ function player::statusschedule(%this)
     }
     if(%this.dazed)
     {
-	%this.spawnExplosion(drunkProjectile, 0.5);
+	%this.spawnExplosion(dbDazeProjectile, 0.5);
     }
     else if(%this.wasDazed)
     {
@@ -378,7 +452,7 @@ function player::statusschedule(%this)
 	    %client = %this.getControllingClient();
 	    %client.setControlObject(%client.camera);
 	    %client.camera.unmountImage (0);
-	    %client.camera.setOrbitMode (%player, %player.getTransform(), 0, 8, 8);
+	    %client.camera.setOrbitMode (%this, %this.getTransform(), 0, 8, 8);
 	    %client.camera.mode = "SPIN";
 	    %client.isSpying = 0;
             %this.wasStunned = 1;
@@ -395,7 +469,7 @@ function player::statusschedule(%this)
 	%this.setMaxCrouchBackwardSpeed(%data.MaxBackwardCrouchSpeed);
 
 	%client = %this.client;
-	%client.setControlObject(%player);
+	%client.setControlObject(%this);
 	%client.camera.setControlObject(0);
 	%client.camera.mode = "";
         %this.wasStunned = 0;
